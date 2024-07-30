@@ -1,14 +1,18 @@
 const http = require("http");
-var StringDecoder = require("string_decoder").StringDecoder;
+const StringDecoder = require("string_decoder").StringDecoder;
 
+// List to store submitted items
+let items = [];
+
+// Function to parse the request body
 const getBody = (req, callback) => {
-  const decode = new StringDecoder("utf-8");
+  const decoder = new StringDecoder("utf-8");
   let body = "";
-  req.on("data", function (data) {
-    body += decode.write(data);
+  req.on("data", (data) => {
+    body += decoder.write(data);
   });
-  req.on("end", function () {
-    body += decode.end();
+  req.on("end", () => {
+    body += decoder.end();
     const body1 = decodeURI(body);
     const bodyArray = body1.split("&");
     const resultHash = {};
@@ -20,45 +24,53 @@ const getBody = (req, callback) => {
   });
 };
 
-// here, you could declare one or more variables to store what comes back from the form.
-let item = "Enter something below.";
-
-// here, you can change the form below to modify the input fields and what is displayed.
-// This is just ordinary html with string interpolation.
+// Function to generate the HTML form and items
 const form = () => {
+  console.log("form: ", items)
+  // Generate HTML for all items
+  const itemsHtml = items.map(item => `<li>${item}</li>`);
+
   return `
   <body>
-  <p>${item}</p>
-  <form method="POST">
-  <input name="item"></input>
-  <button type="submit">Submit</button>
-  </form>
+    <h1>Item List</h1>
+    <ul>
+      ${itemsHtml}
+    </ul>
+    <form method="POST">
+      <input name="item" required></input>
+      <button type="submit">Submit</button>
+    </form>
   </body>
   `;
 };
 
+// Create the HTTP server
 const server = http.createServer((req, res) => {
   console.log("req.method is ", req.method);
   console.log("req.url is ", req.url);
+
   if (req.method === "POST") {
     getBody(req, (body) => {
       console.log("The body of the post is ", body);
-      // here, you can add your own logic
+      // Add new item to the list
       if (body["item"]) {
-        item = body["item"];
+        items.push(decodeURIComponent(body["item"]));
       } else {
-        item = "Nothing was entered.";
+        items.push("Nothing was entered.");
       }
-      // Your code changes would end here
+      // Redirect to the main page
       res.writeHead(303, {
         Location: "/",
       });
       res.end();
     });
   } else {
+    res.writeHead(200, { "Content-Type": "text/html" });
     res.end(form());
   }
 });
 
-server.listen(3000);
-console.log("The server is listening on port 3000.");
+// Start the server
+server.listen(3000, () => {
+  console.log("The server is listening on port 3000.");
+});
