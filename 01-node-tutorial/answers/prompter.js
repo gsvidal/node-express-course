@@ -32,7 +32,7 @@ const form = () => {
 
   return `
   <body>
-    <h1>Item List</h1>
+    <h1>Item List 6th</h1>
     <ul>
       ${itemsHtml}
     </ul>
@@ -72,5 +72,5 @@ const server = http.createServer((req, res) => {
 
 // Start the server
 server.listen(3000, () => {
-  console.log("The server is listening on port 3000.");
+  console.log("The server is listening on port 3000..");
 });
