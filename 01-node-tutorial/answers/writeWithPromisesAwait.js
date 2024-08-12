@@ -1,35 +1,31 @@
 const { writeFile, readFile } = require("fs").promises;
 
-const write = async () => {
-  const path = require('path')
+const path = require('path')
 
-  const filePath = path.join(__dirname, 'temporary', 'temp.txt')
+const filePath = path.join(__dirname, 'temporary', 'temp.txt')
 
-for(let i = 0; i < 3; i++) {
-  await writeFile(
-    filePath,
-    `Sync line ${ i + 1 }\n`,
-    { flag: 'a' }
-  )
+const writer = async () => {
+  try {
+    await writeFile(filePath, "This is the first line.\n");
+    await writeFile(filePath, "This is the second line.\n", { flag: "a" });
+    await writeFile(filePath, "This is the third line.\n", { flag: "a" });
+  } catch(error) {
+    console.error("Error writing to file:", error)
+  }
 }
 
+async function reader() {
+  try {
+    const data = await readFile(filePath, "utf8");
+    console.log(data);
+  } catch (error) {
+    console.error("Error reading from file:", error)
+  }
 }
 
-const reader = async () => {
-  console.log(await readFile(filepath, "utf8"));
+async function readWrite () {
+  await writer();
+  await reader();
 }
 
-
-write()
-      .then((result) =
-
-
-
-
-
-
-
-
-
-
-
+readWrite();
