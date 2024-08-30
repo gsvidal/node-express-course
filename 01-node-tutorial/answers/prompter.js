@@ -11,7 +11,7 @@ const getBody = (req, callback) => {
   req.on("data", (data) => {
     body += decoder.write(data);
   });
-  req.on("end", () => {
+  jreq.on("end", () => {
     body += decoder.end();
     const body1 = decodeURI(body);
     const bodyArray = body1.split("&");
@@ -77,5 +77,4 @@ server.listen(3000, () => {
 
 server.on("request", (req) => {
   console.log("event received: ", req.method, req.url);
-})
-
+});
