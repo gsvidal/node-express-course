@@ -7,7 +7,7 @@ app.use(express.static("./public"));
 
 app.get("/", (req, res) => {
   // res.send("hello world express server");
-  res.send();
+  res.send("main page");
 });
 
 app.get("/api/v1/test", (req, res) => {
